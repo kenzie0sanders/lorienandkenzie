@@ -45,4 +45,18 @@ readmatrix
 
 
 %% Average Peak Thrust and Associated Error
+%Take peak thrust from each case
+MaxMat=[1:10];
+MaxMat(1)=max(filename1);
+MaxMat(2)=max(filename2);
+MaxMat(3)=max(filename3);
+MaxMat(4)=max(filename4);
+MaxMat(5)=max(filename5);
+MaxMat(6)=max(filename6);
+MaxMat(7)=max(filename7);
+MaxMat(8)=max(filename8);
+MaxMat(9)=max(filename9);
+MaxMat(10)=max(filename10);
 
+%avg and print avg peak thrust
+ThrustAvg=avg(MaxMat);
