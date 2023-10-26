@@ -6,9 +6,19 @@
 %% Reading in the Data and cleaning it up
 
 %Names each file
+filename1 = "testrun21";
+filename2 = "testrun22";
+filename3 = "testrun23";
+filename4 = "testrun24";
+filename5 = "testrun25";
+filename6 = "testrun26";
+filename7 = "testrun27";
+filename8 = "testrun28";
+filename9 = "testrun29";
+filename10 = "testrun30";
 
 %opens and reads each file
-
+readmatrix
 %for loop for each of 10 cases
 
 %separates into two cells
