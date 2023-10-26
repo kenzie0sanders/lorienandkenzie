@@ -23,8 +23,17 @@ readmatrix
 
 %separates into two cells
 
-%cleans up cells from 0s and NaNs
-
+%cleans up cells from NaNs, leaving 0s at beinning and end
+filename1 = rmmissing(filename1);
+filename2 = rmmissing(filename2);
+filename3 = rmmissing(filename3);
+filename4 = rmmissing(filename4);
+filename5 = rmmissing(filename5);
+filename6 = rmmissing(filename6);
+filename7 = rmmissing(filename7);
+filename8 = rmmissing(filename8);
+filename9 = rmmissing(filename9);
+filename10 = rmmissing(filename10);
 
 %% Line of best fit for each cell using polyfit and polyval
 
