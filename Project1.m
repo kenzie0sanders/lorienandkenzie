@@ -1,7 +1,8 @@
 % Authors: Kenzie Sanders and Lorien Hoshall
 % Assignment Title: Project 1: Water Bottle Rocket Force Calibration
 % Purpose: To find the average load on each cell from a water bottle rocket
-% Date: 10/25/23
+% Date Created: 10/25/23
+% Date Revised: 10/26, 27, 28
 
 close all;
 clear;
@@ -81,7 +82,7 @@ errorbar(Data1.time(ixErr_1_0),Ch0_bestfit1(ixErr_1_0),err1_Ch0(ixErr_1_0),'Line
 err1_Ch1=zeros(size(Ch1_bestfit1));
 ixErr_1_1=1:N:numel(Ch1_bestfit1);
 err1_Ch1(ixErr_1_1) = std(Ch1_bestfit1);
-errorbar(Data1.time(ixErr_1_1),Ch1_bestfit1(ixErr_1_1),err2_Ch0(ixErr_1_1),'LineStyle','none');
+errorbar(Data1.time(ixErr_1_1),Ch1_bestfit1(ixErr_1_1),err1_Ch0(ixErr_1_1),'LineStyle','none');
 
 xlim([0.5 1.5]); %creates a bound for the time so the graphs aren't incredibly unwieldy
 hold off
