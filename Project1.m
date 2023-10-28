@@ -68,12 +68,29 @@ LoadChannel0 = Calibration_weight .* Ch0_eff./Sum_eff;
 
 figure()
 plot(Data1.time,Ch0_bestfit1,Data1.time,Ch1_bestfit1);
+hold on
+
+%Error Bars for Chanel 0
+err1_Ch0=zeros(size(Ch0_bestfit1));
+N=100;
+ixErr_1_0=1:N:numel(Ch0_bestfit1);
+err1_Ch0(ixErr_1_0) = std(Ch0_bestfit1);
+errorbar(Data1.time(ixErr_1_0),Ch0_bestfit1(ixErr_1_0),err1_Ch0(ixErr_1_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err1_Ch1=zeros(size(Ch1_bestfit1));
+ixErr_1_1=1:N:numel(Ch1_bestfit1);
+err1_Ch1(ixErr_1_1) = std(Ch1_bestfit1);
+errorbar(Data1.time(ixErr_1_1),Ch1_bestfit1(ixErr_1_1),err2_Ch0(ixErr_1_1),'LineStyle','none');
+
 xlim([0.5 1.5]); %creates a bound for the time so the graphs aren't incredibly unwieldy
+hold off
 
 %legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 1");
+legend("Chanel 0", 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Plotting Case 2
 
@@ -83,10 +100,26 @@ title("Test Case 1");
 figure()
 plot(Data2.time,Ch0_bestfit2,Data2.time,Ch1_bestfit2);
 xlim([1 2]); 
-%legends and things for case 2
+hold on
+
+%Error Bars for Chanel 0
+err2_Ch0=zeros(size(Ch0_bestfit2));
+ixErr_2_0=1:N:numel(Ch0_bestfit2);
+err2_Ch0(ixErr_2_0) = std(Ch0_bestfit2);
+errorbar(Data2.time(ixErr_2_0),Ch0_bestfit2(ixErr_2_0),err2_Ch0(ixErr_2_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err2_Ch1=zeros(size(Ch1_bestfit2));
+ixErr_2_1=1:N:numel(Ch1_bestfit2);
+err2_Ch1(ixErr_2_1) = std(Ch1_bestfit2);
+errorbar(Data2.time(ixErr_2_1),Ch1_bestfit2(ixErr_2_1),err2_Ch1(ixErr_2_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 2");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Plotting Case 3
 
@@ -96,10 +129,26 @@ title("Test Case 2");
 figure()
 plot(Data3.time,Ch0_bestfit3,Data3.time,Ch1_bestfit3);
 xlim([1 2]); 
-%legends and things for case 3
+hold on
+
+%Error Bars for Chanel 0
+err3_Ch0=zeros(size(Ch0_bestfit3));
+ixErr_3_0=1:N:numel(Ch0_bestfit3);
+err3_Ch0(ixErr_3_0) = std(Ch0_bestfit3);
+errorbar(Data3.time(ixErr_3_0),Ch0_bestfit3(ixErr_3_0),err3_Ch0(ixErr_3_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err3_Ch1=zeros(size(Ch1_bestfit3));
+ixErr_3_1=1:N:numel(Ch1_bestfit3);
+err3_Ch1(ixErr_3_1) = std(Ch1_bestfit3);
+errorbar(Data3.time(ixErr_3_1),Ch1_bestfit3(ixErr_3_1),err3_Ch1(ixErr_3_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 3");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Plotting Case 4
 
@@ -109,10 +158,26 @@ title("Test Case 3");
 figure()
 plot(Data4.time,Ch0_bestfit4,Data4.time,Ch1_bestfit4);
 xlim([1.5 2.5]); 
-%legends and things for case 4 
+hold on
+
+%Error Bars for Chanel 0
+err4_Ch0=zeros(size(Ch0_bestfit4));
+ixErr_4_0=1:N:numel(Ch0_bestfit4);
+err4_Ch0(ixErr_4_0) = std(Ch0_bestfit4);
+errorbar(Data4.time(ixErr_4_0),Ch0_bestfit4(ixErr_4_0),err4_Ch0(ixErr_4_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err4_Ch1=zeros(size(Ch1_bestfit4));
+ixErr_4_1=1:N:numel(Ch1_bestfit4);
+err4_Ch1(ixErr_4_1) = std(Ch1_bestfit4);
+errorbar(Data4.time(ixErr_4_1),Ch1_bestfit4(ixErr_4_1),err4_Ch1(ixErr_4_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 4");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Plotting Case 5
 
@@ -122,10 +187,26 @@ title("Test Case 4");
 figure()
 plot(Data5.time,Ch0_bestfit5,Data5.time,Ch1_bestfit5);
 xlim([1.2 2.2]); 
-%legends and things for case 5
+hold on
+
+%Error Bars for Chanel 0
+err5_Ch0=zeros(size(Ch0_bestfit5));
+ixErr_5_0=1:N:numel(Ch0_bestfit5);
+err5_Ch0(ixErr_5_0) = std(Ch0_bestfit5);
+errorbar(Data5.time(ixErr_5_0),Ch0_bestfit5(ixErr_5_0),err5_Ch0(ixErr_5_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err5_Ch1=zeros(size(Ch1_bestfit5));
+ixErr_5_1=1:N:numel(Ch1_bestfit5);
+err5_Ch1(ixErr_5_1) = std(Ch1_bestfit5);
+errorbar(Data5.time(ixErr_5_1),Ch1_bestfit5(ixErr_5_1),err5_Ch1(ixErr_5_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 5");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Plotting Case 6
 
@@ -135,10 +216,26 @@ title("Test Case 5");
 figure()
 plot(Data6.time,Ch0_bestfit6,Data6.time,Ch1_bestfit6);
 xlim([1.5 2.5]); 
-%legends and things for case 6
+hold on
+
+%Error Bars for Chanel 0
+err6_Ch0=zeros(size(Ch0_bestfit6));
+ixErr_6_0=1:N:numel(Ch0_bestfit6);
+err6_Ch0(ixErr_6_0) = std(Ch0_bestfit6);
+errorbar(Data6.time(ixErr_6_0),Ch0_bestfit6(ixErr_6_0),err6_Ch0(ixErr_6_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err6_Ch1=zeros(size(Ch1_bestfit6));
+ixErr_6_1=1:N:numel(Ch1_bestfit6);
+err6_Ch1(ixErr_6_1) = std(Ch1_bestfit6);
+errorbar(Data6.time(ixErr_6_1),Ch1_bestfit6(ixErr_6_1),err6_Ch1(ixErr_6_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 6");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Plotting Case 7
 
@@ -148,10 +245,28 @@ title("Test Case 6");
 figure()
 plot(Data7.time,Ch0_bestfit7,Data7.time,Ch1_bestfit7);
 xlim([0 1]); 
-%legends and things for case 7
+hold on
+
+%Error Bars for Chanel 0
+err7_Ch0=zeros(size(Ch0_bestfit7));
+ixErr_7_0=1:N:numel(Ch0_bestfit7);
+err7_Ch0(ixErr_7_0) = std(Ch0_bestfit7);
+errorbar(Data7.time(ixErr_7_0),Ch0_bestfit7(ixErr_7_0),err7_Ch0(ixErr_7_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err7_Ch1=zeros(size(Ch1_bestfit7));
+ixErr_7_1=1:N:numel(Ch1_bestfit7);
+err7_Ch1(ixErr_7_1) = std(Ch1_bestfit7);
+errorbar(Data7.time(ixErr_7_1),Ch1_bestfit7(ixErr_7_1),err7_Ch1(ixErr_7_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 7");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
+
+%It was at this point Lorien realized coding all of these error bars might be easier with a function, but she was already almost done
 
 %% Plotting Case 8
 
@@ -161,10 +276,26 @@ title("Test Case 7");
 figure()
 plot(Data8.time,Ch0_bestfit8,Data8.time,Ch1_bestfit8);
 xlim([2.5 3.5]); 
-%legends and things for case 8
+hold on
+
+%Error Bars for Chanel 0
+err8_Ch0=zeros(size(Ch0_bestfit8));
+ixErr_8_0=1:N:numel(Ch0_bestfit8);
+err8_Ch0(ixErr_8_0) = std(Ch0_bestfit8);
+errorbar(Data8.time(ixErr_8_0),Ch0_bestfit8(ixErr_8_0),err8_Ch0(ixErr_8_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err8_Ch1=zeros(size(Ch1_bestfit8));
+ixErr_8_1=1:N:numel(Ch1_bestfit8);
+err8_Ch1(ixErr_8_1) = std(Ch1_bestfit8);
+errorbar(Data8.time(ixErr_8_1),Ch1_bestfit8(ixErr_8_1),err8_Ch1(ixErr_8_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 8");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Plotting Case 9
 
@@ -174,10 +305,26 @@ title("Test Case 8");
 figure()
 plot(Data9.time,Ch0_bestfit9,Data9.time,Ch1_bestfit9);
 xlim([.5 1.5]); 
-%legends and things for case 9
+hold on
+
+%Error Bars for Chanel 0
+err9_Ch0=zeros(size(Ch0_bestfit9));
+ixErr_9_0=1:N:numel(Ch0_bestfit9);
+err9_Ch0(ixErr_9_0) = std(Ch0_bestfit9);
+errorbar(Data9.time(ixErr_9_0),Ch0_bestfit9(ixErr_9_0),err9_Ch0(ixErr_9_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err9_Ch1=zeros(size(Ch1_bestfit9));
+ixErr_9_1=1:N:numel(Ch1_bestfit9);
+err9_Ch1(ixErr_9_1) = std(Ch1_bestfit9);
+errorbar(Data9.time(ixErr_9_1),Ch1_bestfit9(ixErr_9_1),err9_Ch1(ixErr_9_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
 title("Test Case 9");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Plotting Case 10
 
@@ -187,10 +334,26 @@ title("Test Case 9");
 figure()
 plot(Data10.time,Ch0_bestfit10,Data10.time,Ch1_bestfit10);
 xlim([.5 1.5]); 
-%legends and things for case 10
+hold on
+
+%Error Bars for Chanel 0
+err10_Ch0=zeros(size(Ch0_bestfit10));
+ixErr_10_0=1:N:numel(Ch0_bestfit10);
+err10_Ch0(ixErr_10_0) = std(Ch0_bestfit10);
+errorbar(Data10.time(ixErr_10_0),Ch0_bestfit10(ixErr_10_0),err10_Ch0(ixErr_10_0),'LineStyle','none');
+
+%Error Bars for Chanel 1
+err10_Ch1=zeros(size(Ch1_bestfit10));
+ixErr_10_1=1:N:numel(Ch1_bestfit10);
+err10_Ch1(ixErr_10_1) = std(Ch1_bestfit10);
+errorbar(Data10.time(ixErr_10_1),Ch1_bestfit10(ixErr_10_1),err10_Ch1(ixErr_10_1),'LineStyle','none');
+hold off
+
+%legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
-title("Test Case 10");
+title("Test Case 9");
+legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Average Peak Thrust and Associated Error
 %Take peak thrust from each case
