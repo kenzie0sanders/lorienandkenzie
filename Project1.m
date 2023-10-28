@@ -71,6 +71,9 @@ plot(Data1.time,Ch0_bestfit1,Data1.time,Ch1_bestfit1);
 xlim([0.5 1.5]); %creates a bound for the time so the graphs aren't incredibly unwieldy
 
 %legends and things for case 1
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 1");
 
 %% Plotting Case 2
 
@@ -81,7 +84,9 @@ figure()
 plot(Data2.time,Ch0_bestfit2,Data2.time,Ch1_bestfit2);
 xlim([1 2]); 
 %legends and things for case 2
-
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 2");
 
 %% Plotting Case 3
 
@@ -92,7 +97,9 @@ figure()
 plot(Data3.time,Ch0_bestfit3,Data3.time,Ch1_bestfit3);
 xlim([1 2]); 
 %legends and things for case 3
-
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 3");
 
 %% Plotting Case 4
 
@@ -103,6 +110,9 @@ figure()
 plot(Data4.time,Ch0_bestfit4,Data4.time,Ch1_bestfit4);
 xlim([1.5 2.5]); 
 %legends and things for case 4 
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 4");
 
 %% Plotting Case 5
 
@@ -113,7 +123,9 @@ figure()
 plot(Data5.time,Ch0_bestfit5,Data5.time,Ch1_bestfit5);
 xlim([1.2 2.2]); 
 %legends and things for case 5
-
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 5");
 
 %% Plotting Case 6
 
@@ -124,6 +136,9 @@ figure()
 plot(Data6.time,Ch0_bestfit6,Data6.time,Ch1_bestfit6);
 xlim([1.5 2.5]); 
 %legends and things for case 6
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 6");
 
 %% Plotting Case 7
 
@@ -134,6 +149,9 @@ figure()
 plot(Data7.time,Ch0_bestfit7,Data7.time,Ch1_bestfit7);
 xlim([0 1]); 
 %legends and things for case 7
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 7");
 
 %% Plotting Case 8
 
@@ -144,6 +162,9 @@ figure()
 plot(Data8.time,Ch0_bestfit8,Data8.time,Ch1_bestfit8);
 xlim([2.5 3.5]); 
 %legends and things for case 8
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 8");
 
 %% Plotting Case 9
 
@@ -154,8 +175,11 @@ figure()
 plot(Data9.time,Ch0_bestfit9,Data9.time,Ch1_bestfit9);
 xlim([.5 1.5]); 
 %legends and things for case 9
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 9");
 
-%% Plotting Case 4
+%% Plotting Case 10
 
 [Ch0_bestfit10, Ch0_delta10] = polyval(Ch0_coeff, Data10.mV(:,1), Ch0_S);
 [Ch1_bestfit10, Ch1_delta10] = polyval(Ch1_coeff, Data10.mV(:,2), Ch1_S);
@@ -164,6 +188,9 @@ figure()
 plot(Data10.time,Ch0_bestfit10,Data10.time,Ch1_bestfit10);
 xlim([.5 1.5]); 
 %legends and things for case 10
+xlabel("Time(s)");
+ylabel("Thrust (lbs)");
+title("Test Case 10");
 
 %% Average Peak Thrust and Associated Error
 %Take peak thrust from each case
@@ -179,6 +206,6 @@ MaxMat=10:2;
 [MaxMat(9,1),index91]=max(Ch0_bestfit9); [MaxMat(9,2),index92]=max(Ch1_bestfit9);
 [MaxMat(10,1),index101]=max(Ch0_bestfit10); [MaxMat(10,2),index102]=max(Ch1_bestfit10);
 
-%avg and print avg peak thrust
+%avg peak thrust and error
 ThrustAvg=mean(mean(MaxMat));
 ThrustError=mean(std(MaxMat));
