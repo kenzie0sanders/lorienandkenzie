@@ -37,6 +37,19 @@ Data9 = load(filename9);
 Data10 = load(filename10);
 %These are now structures
 
+%cleans up the data for anything below 0
+Data1.mV(Data1.mV<0) = 0;
+Data2.mV(Data2.mV<0) = 0;
+Data3.mV(Data3.mV<0) = 0;
+Data4.mV(Data4.mV<0) = 0;
+Data5.mV(Data5.mV<0) = 0;
+Data6.mV(Data6.mV<0) = 0;
+Data7.mV(Data7.mV<0) = 0;
+Data8.mV(Data8.mV<0) = 0;
+Data9.mV(Data9.mV<0) = 0;
+Data10.mV(Data10.mV<0) = 0;
+
+
 %% Calibration Test polynomial
 Calibration_weight = Calibration_data(:,1);
 Channel0_offset = Calibration_data(:,2);
@@ -353,7 +366,7 @@ hold off
 %legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
-title("Test Case 9");
+title("Test Case 10");
 legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
 
 %% Average Peak Thrust and Associated Error
