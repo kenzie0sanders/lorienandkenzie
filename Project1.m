@@ -12,43 +12,18 @@ clc;
 
 %Names each file
 filename = "Static Test Stand Calibration Case 3.xlsx";
-filename1 = "testrun21";
-filename2 = "testrun22";
-filename3 = "testrun23";
-filename4 = "testrun24";
-filename5 = "testrun25";
-filename6 = "testrun26";
-filename7 = "testrun27";
-filename8 = "testrun28";
-filename9 = "testrun29";
-filename10 = "testrun30";
-
+for i=1:10
+filename(i+1) = sprintf("testrun%g", 20+i);
+end
 %opens and reads each file
-Calibration_data = readmatrix(filename);
-Data1 = load(filename1);
-Data2 = load(filename2);
-Data3 = load(filename3);
-Data4 = load(filename4);
-Data5 = load(filename5);
-Data6 = load(filename6);
-Data7 = load(filename7);
-Data8 = load(filename8);
-Data9 = load(filename9);
-Data10 = load(filename10);
+Calibration_data = readmatrix(filename(1));
+
+for j=1:10
+Data(j) = load(filename(j+1));
+end
+
 %These are now structures
-
 %cleans up the data for anything below 0
-Data1.mV(Data1.mV<0) = 0;
-Data2.mV(Data2.mV<0) = 0;
-Data3.mV(Data3.mV<0) = 0;
-Data4.mV(Data4.mV<0) = 0;
-Data5.mV(Data5.mV<0) = 0;
-Data6.mV(Data6.mV<0) = 0;
-Data7.mV(Data7.mV<0) = 0;
-Data8.mV(Data8.mV<0) = 0;
-Data9.mV(Data9.mV<0) = 0;
-Data10.mV(Data10.mV<0) = 0;
-
 
 %% Calibration Test polynomial
 Calibration_weight = Calibration_data(:,1);
@@ -66,323 +41,89 @@ Sum_eff = Ch1_eff + Ch0_eff;
 LoadChannel1 = Calibration_weight .* Ch1_eff./Sum_eff;
 LoadChannel0 = Calibration_weight .* Ch0_eff./Sum_eff;
 
-%% Line of best fit for each cell using polyfit and polyval
-
-%calling polyfit and polyval
+%% Creating Lines of Best Fit for 
 %Creates coefficients for the lines of best fit off the calibration data
-[Ch0_coeff, Ch0_S] = polyfit(Calibration_weight, LoadChannel0,1);
-[Ch1_coeff, Ch1_S] = polyfit(Calibration_weight, LoadChannel1,1);
+[Ch0_coeff, Ch0_S,MU0] = polyfit(Ch0_eff, LoadChannel0, 1);
+[Ch1_coeff, Ch1_S,MU1] = polyfit(Ch1_eff, LoadChannel1, 1);
 
+%using polyval to find the lines of voltage vs weight and make sure its
+%accurate
+[Ch0_calibrationfit, Ch0_delta] = polyval(Ch0_coeff, Ch0_eff, Ch0_S,MU0);
+[Ch1_calibrationfit, Ch1_delta] = polyval(Ch1_coeff, Ch1_eff, Ch1_S,MU1);
 
-%% Plotting Case 1
-%about to make 10 of these, sorry
+%converting load on one channel to total load
+Total_calibrationfit = Ch1_calibrationfit.*(Sum_eff)./Ch1_eff;
+Total_calibrationerr = Total_calibrationfit+(Ch0_delta+Ch1_delta);
+Total_calibrationerr1 = Total_calibrationfit-(Ch0_delta+Ch1_delta);
 
-[Ch0_bestfit1, Ch0_delta1] = polyval(Ch0_coeff, Data1.mV(:,1), Ch0_S);
-[Ch1_bestfit1, Ch1_delta1] = polyval(Ch1_coeff, Data1.mV(:,2), Ch1_S);
+%plotting
+plot(Sum_eff/2,Total_calibrationfit,'b-'); hold on;
+plot(Sum_eff/2,Total_calibrationerr,'k-',Sum_eff/2,Total_calibrationerr1,'k-')
+
+title("Calibration Test Data","Voltage vs Thrust");
+xlabel("Voltage (mV)");
+ylabel("Thrust (lbs)");
+legend("Total Thrust","95% Error")
+
+%% Plotting Cases 1 through 10
+
+%preallocating matrices
+MaxMat=10:1;
+
+%does the work of 10 cases in one loop, wish i knew about this before
+%typing out each one individually
+for k=1:10
+[Ch0_bestfit, Ch0_delta] = polyval(Ch0_coeff, Data(k).mV(:,1), Ch0_S,MU0);
+[Ch1_bestfit, Ch1_delta] = polyval(Ch1_coeff, Data(k).mV(:,2), Ch1_S,MU1);
+
+%converting load on one channel to total load
+Total_bestfit0 = Ch0_bestfit.*(Data(k).mV(:,1)+Data(k).mV(:,2))./Data(k).mV(:,1);
+Total_bestfit1 = Ch1_bestfit.*(Data(k).mV(:,1)+Data(k).mV(:,2))./Data(k).mV(:,2);
+Total_bestfit = (Total_bestfit0+Total_bestfit1)/2;
+Total_bestfit(isnan(Total_bestfit))=0; % clearing up NaNs and inf from dividing by 0
+Total_bestfit(isinf(Total_bestfit))=0;
 
 figure()
-plot(Data1.time,Ch0_bestfit1,Data1.time,Ch1_bestfit1);
+plot(Data(k).time,Total_bestfit);
 hold on
 
-%Error Bars for Chanel 0
-err1_Ch0=zeros(size(Ch0_bestfit1));
+%Error Bars for Channel 0
+err1_Ch0=zeros(size(Ch0_bestfit));
 N=100;
-ixErr_1_0=1:N:numel(Ch0_bestfit1);
-err1_Ch0(ixErr_1_0) = std(Ch0_bestfit1);
-errorbar(Data1.time(ixErr_1_0),Ch0_bestfit1(ixErr_1_0),err1_Ch0(ixErr_1_0),'LineStyle','none');
+ixErr_0=1:N:numel(Ch0_bestfit);
+err1_Ch0(ixErr_0) = 2*Ch0_delta(ixErr_0);
 
-%Error Bars for Chanel 1
-err1_Ch1=zeros(size(Ch1_bestfit1));
-ixErr_1_1=1:N:numel(Ch1_bestfit1);
-err1_Ch1(ixErr_1_1) = std(Ch1_bestfit1);
-errorbar(Data1.time(ixErr_1_1),Ch1_bestfit1(ixErr_1_1),err1_Ch0(ixErr_1_1),'LineStyle','none');
+%Error Bars for Channel 1
+err1_Ch1=zeros(size(Ch1_bestfit));
+ixErr_1=1:N:numel(Ch1_bestfit);
+err1_Ch1(ixErr_1) = 2*Ch1_delta(ixErr_1); %2*std is required or 95% confidence interval
+errorbar(Data(k).time(ixErr_1),Ch1_bestfit(ixErr_1)+Ch0_bestfit(ixErr_0),err1_Ch0(ixErr_1)+err1_Ch0(ixErr_0),'LineStyle','none');
 
-xlim([0.5 1.5]); %creates a bound for the time so the graphs aren't incredibly unwieldy
+%creates a bound for the time so the graphs aren't incredibly unwieldy
+[MAX,indexMAX]=max(Ch1_bestfit+Ch0_bestfit);
+timeMAX = Data(k).time(indexMAX);
+if timeMAX-1<0
+    xLEFT = 0;
+    xRIGHT = timeMAX+1+(1-timeMAX);
+else
+    xLEFT = timeMAX-1;
+    xRIGHT = timeMAX+1;
+end
+xlim([xLEFT xRIGHT]); 
 hold off
 
 %legends and things for case 1
 xlabel("Time(s)");
 ylabel("Thrust (lbs)");
-title("Test Case 1");
-legend("Chanel 0", 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
+title(sprintf("Test Case %g",k));
+legend("Total Force", "Total Error");
 
-%% Plotting Case 2
+%finding the max of each line
+MaxMat(k)=max(Total_bestfit); 
 
-[Ch0_bestfit2, Ch0_delta2] = polyval(Ch0_coeff, Data2.mV(:,1), Ch0_S);
-[Ch1_bestfit2, Ch1_delta2] = polyval(Ch1_coeff, Data2.mV(:,2), Ch1_S);
+end
 
-figure()
-plot(Data2.time,Ch0_bestfit2,Data2.time,Ch1_bestfit2);
-xlim([1 2]); 
-hold on
+%% Calculates Average peak thrust and error
 
-%Error Bars for Chanel 0
-err2_Ch0=zeros(size(Ch0_bestfit2));
-ixErr_2_0=1:N:numel(Ch0_bestfit2);
-err2_Ch0(ixErr_2_0) = std(Ch0_bestfit2);
-errorbar(Data2.time(ixErr_2_0),Ch0_bestfit2(ixErr_2_0),err2_Ch0(ixErr_2_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err2_Ch1=zeros(size(Ch1_bestfit2));
-ixErr_2_1=1:N:numel(Ch1_bestfit2);
-err2_Ch1(ixErr_2_1) = std(Ch1_bestfit2);
-errorbar(Data2.time(ixErr_2_1),Ch1_bestfit2(ixErr_2_1),err2_Ch1(ixErr_2_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 2");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%% Plotting Case 3
-
-[Ch0_bestfit3, Ch0_delta3] = polyval(Ch0_coeff, Data3.mV(:,1), Ch0_S);
-[Ch1_bestfit3, Ch1_delta3] = polyval(Ch1_coeff, Data3.mV(:,2), Ch1_S);
-
-figure()
-plot(Data3.time,Ch0_bestfit3,Data3.time,Ch1_bestfit3);
-xlim([1 2]); 
-hold on
-
-%Error Bars for Chanel 0
-err3_Ch0=zeros(size(Ch0_bestfit3));
-ixErr_3_0=1:N:numel(Ch0_bestfit3);
-err3_Ch0(ixErr_3_0) = std(Ch0_bestfit3);
-errorbar(Data3.time(ixErr_3_0),Ch0_bestfit3(ixErr_3_0),err3_Ch0(ixErr_3_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err3_Ch1=zeros(size(Ch1_bestfit3));
-ixErr_3_1=1:N:numel(Ch1_bestfit3);
-err3_Ch1(ixErr_3_1) = std(Ch1_bestfit3);
-errorbar(Data3.time(ixErr_3_1),Ch1_bestfit3(ixErr_3_1),err3_Ch1(ixErr_3_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 3");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%% Plotting Case 4
-
-[Ch0_bestfit4, Ch0_delta4] = polyval(Ch0_coeff, Data4.mV(:,1), Ch0_S);
-[Ch1_bestfit4, Ch1_delta4] = polyval(Ch1_coeff, Data4.mV(:,2), Ch1_S);
-
-figure()
-plot(Data4.time,Ch0_bestfit4,Data4.time,Ch1_bestfit4);
-xlim([1.5 2.5]); 
-hold on
-
-%Error Bars for Chanel 0
-err4_Ch0=zeros(size(Ch0_bestfit4));
-ixErr_4_0=1:N:numel(Ch0_bestfit4);
-err4_Ch0(ixErr_4_0) = std(Ch0_bestfit4);
-errorbar(Data4.time(ixErr_4_0),Ch0_bestfit4(ixErr_4_0),err4_Ch0(ixErr_4_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err4_Ch1=zeros(size(Ch1_bestfit4));
-ixErr_4_1=1:N:numel(Ch1_bestfit4);
-err4_Ch1(ixErr_4_1) = std(Ch1_bestfit4);
-errorbar(Data4.time(ixErr_4_1),Ch1_bestfit4(ixErr_4_1),err4_Ch1(ixErr_4_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 4");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%% Plotting Case 5
-
-[Ch0_bestfit5, Ch0_delta5] = polyval(Ch0_coeff, Data5.mV(:,1), Ch0_S);
-[Ch1_bestfit5, Ch1_delta5] = polyval(Ch1_coeff, Data5.mV(:,2), Ch1_S);
-
-figure()
-plot(Data5.time,Ch0_bestfit5,Data5.time,Ch1_bestfit5);
-xlim([1.2 2.2]); 
-hold on
-
-%Error Bars for Chanel 0
-err5_Ch0=zeros(size(Ch0_bestfit5));
-ixErr_5_0=1:N:numel(Ch0_bestfit5);
-err5_Ch0(ixErr_5_0) = std(Ch0_bestfit5);
-errorbar(Data5.time(ixErr_5_0),Ch0_bestfit5(ixErr_5_0),err5_Ch0(ixErr_5_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err5_Ch1=zeros(size(Ch1_bestfit5));
-ixErr_5_1=1:N:numel(Ch1_bestfit5);
-err5_Ch1(ixErr_5_1) = std(Ch1_bestfit5);
-errorbar(Data5.time(ixErr_5_1),Ch1_bestfit5(ixErr_5_1),err5_Ch1(ixErr_5_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 5");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%% Plotting Case 6
-
-[Ch0_bestfit6, Ch0_delta6] = polyval(Ch0_coeff, Data6.mV(:,1), Ch0_S);
-[Ch1_bestfit6, Ch1_delta6] = polyval(Ch1_coeff, Data6.mV(:,2), Ch1_S);
-
-figure()
-plot(Data6.time,Ch0_bestfit6,Data6.time,Ch1_bestfit6);
-xlim([1.5 2.5]); 
-hold on
-
-%Error Bars for Chanel 0
-err6_Ch0=zeros(size(Ch0_bestfit6));
-ixErr_6_0=1:N:numel(Ch0_bestfit6);
-err6_Ch0(ixErr_6_0) = std(Ch0_bestfit6);
-errorbar(Data6.time(ixErr_6_0),Ch0_bestfit6(ixErr_6_0),err6_Ch0(ixErr_6_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err6_Ch1=zeros(size(Ch1_bestfit6));
-ixErr_6_1=1:N:numel(Ch1_bestfit6);
-err6_Ch1(ixErr_6_1) = std(Ch1_bestfit6);
-errorbar(Data6.time(ixErr_6_1),Ch1_bestfit6(ixErr_6_1),err6_Ch1(ixErr_6_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 6");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%% Plotting Case 7
-
-[Ch0_bestfit7, Ch0_delta7] = polyval(Ch0_coeff, Data7.mV(:,1), Ch0_S);
-[Ch1_bestfit7, Ch1_delta7] = polyval(Ch1_coeff, Data7.mV(:,2), Ch1_S);
-
-figure()
-plot(Data7.time,Ch0_bestfit7,Data7.time,Ch1_bestfit7);
-xlim([0 1]); 
-hold on
-
-%Error Bars for Chanel 0
-err7_Ch0=zeros(size(Ch0_bestfit7));
-ixErr_7_0=1:N:numel(Ch0_bestfit7);
-err7_Ch0(ixErr_7_0) = std(Ch0_bestfit7);
-errorbar(Data7.time(ixErr_7_0),Ch0_bestfit7(ixErr_7_0),err7_Ch0(ixErr_7_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err7_Ch1=zeros(size(Ch1_bestfit7));
-ixErr_7_1=1:N:numel(Ch1_bestfit7);
-err7_Ch1(ixErr_7_1) = std(Ch1_bestfit7);
-errorbar(Data7.time(ixErr_7_1),Ch1_bestfit7(ixErr_7_1),err7_Ch1(ixErr_7_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 7");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%It was at this point Lorien realized coding all of these error bars might be easier with a function, but she was already almost done
-
-%% Plotting Case 8
-
-[Ch0_bestfit8, Ch0_delta8] = polyval(Ch0_coeff, Data8.mV(:,1), Ch0_S);
-[Ch1_bestfit8, Ch1_delta8] = polyval(Ch1_coeff, Data8.mV(:,2), Ch1_S);
-
-figure()
-plot(Data8.time,Ch0_bestfit8,Data8.time,Ch1_bestfit8);
-xlim([2.5 3.5]); 
-hold on
-
-%Error Bars for Chanel 0
-err8_Ch0=zeros(size(Ch0_bestfit8));
-ixErr_8_0=1:N:numel(Ch0_bestfit8);
-err8_Ch0(ixErr_8_0) = std(Ch0_bestfit8);
-errorbar(Data8.time(ixErr_8_0),Ch0_bestfit8(ixErr_8_0),err8_Ch0(ixErr_8_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err8_Ch1=zeros(size(Ch1_bestfit8));
-ixErr_8_1=1:N:numel(Ch1_bestfit8);
-err8_Ch1(ixErr_8_1) = std(Ch1_bestfit8);
-errorbar(Data8.time(ixErr_8_1),Ch1_bestfit8(ixErr_8_1),err8_Ch1(ixErr_8_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 8");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%% Plotting Case 9
-
-[Ch0_bestfit9, Ch0_delta9] = polyval(Ch0_coeff, Data9.mV(:,1), Ch0_S);
-[Ch1_bestfit9, Ch1_delta9] = polyval(Ch1_coeff, Data9.mV(:,2), Ch1_S);
-
-figure()
-plot(Data9.time,Ch0_bestfit9,Data9.time,Ch1_bestfit9);
-xlim([.5 1.5]); 
-hold on
-
-%Error Bars for Chanel 0
-err9_Ch0=zeros(size(Ch0_bestfit9));
-ixErr_9_0=1:N:numel(Ch0_bestfit9);
-err9_Ch0(ixErr_9_0) = std(Ch0_bestfit9);
-errorbar(Data9.time(ixErr_9_0),Ch0_bestfit9(ixErr_9_0),err9_Ch0(ixErr_9_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err9_Ch1=zeros(size(Ch1_bestfit9));
-ixErr_9_1=1:N:numel(Ch1_bestfit9);
-err9_Ch1(ixErr_9_1) = std(Ch1_bestfit9);
-errorbar(Data9.time(ixErr_9_1),Ch1_bestfit9(ixErr_9_1),err9_Ch1(ixErr_9_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 9");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%% Plotting Case 10
-
-[Ch0_bestfit10, Ch0_delta10] = polyval(Ch0_coeff, Data10.mV(:,1), Ch0_S);
-[Ch1_bestfit10, Ch1_delta10] = polyval(Ch1_coeff, Data10.mV(:,2), Ch1_S);
-
-figure()
-plot(Data10.time,Ch0_bestfit10,Data10.time,Ch1_bestfit10);
-xlim([.5 1.5]); 
-hold on
-
-%Error Bars for Chanel 0
-err10_Ch0=zeros(size(Ch0_bestfit10));
-ixErr_10_0=1:N:numel(Ch0_bestfit10);
-err10_Ch0(ixErr_10_0) = std(Ch0_bestfit10);
-errorbar(Data10.time(ixErr_10_0),Ch0_bestfit10(ixErr_10_0),err10_Ch0(ixErr_10_0),'LineStyle','none');
-
-%Error Bars for Chanel 1
-err10_Ch1=zeros(size(Ch1_bestfit10));
-ixErr_10_1=1:N:numel(Ch1_bestfit10);
-err10_Ch1(ixErr_10_1) = std(Ch1_bestfit10);
-errorbar(Data10.time(ixErr_10_1),Ch1_bestfit10(ixErr_10_1),err10_Ch1(ixErr_10_1),'LineStyle','none');
-hold off
-
-%legends and things for case 1
-xlabel("Time(s)");
-ylabel("Thrust (lbs)");
-title("Test Case 10");
-legend('Chanel 0', 'Chanel 1', 'Chanel 0 Error', 'Chanel 1 Error');
-
-%% Average Peak Thrust and Associated Error
-%Take peak thrust from each case
-MaxMat=10:2;
-[MaxMat(1,1),index11]=max(Ch0_bestfit1); [MaxMat(1,2),index12]=max(Ch1_bestfit1);
-[MaxMat(2,1),index21]=max(Ch0_bestfit2); [MaxMat(2,2),index22]=max(Ch1_bestfit2);
-[MaxMat(3,1),index31]=max(Ch0_bestfit3); [MaxMat(3,2),index32]=max(Ch1_bestfit3);
-[MaxMat(4,1),index41]=max(Ch0_bestfit4); [MaxMat(4,2),index42]=max(Ch1_bestfit4);
-[MaxMat(5,1),index51]=max(Ch0_bestfit5); [MaxMat(5,2),index52]=max(Ch1_bestfit5);
-[MaxMat(6,1),index61]=max(Ch0_bestfit6); [MaxMat(6,2),index62]=max(Ch1_bestfit6);
-[MaxMat(7,1),index71]=max(Ch0_bestfit7); [MaxMat(7,2),index72]=max(Ch1_bestfit7);
-[MaxMat(8,1),index81]=max(Ch0_bestfit8); [MaxMat(8,2),index82]=max(Ch1_bestfit8);
-[MaxMat(9,1),index91]=max(Ch0_bestfit9); [MaxMat(9,2),index92]=max(Ch1_bestfit9);
-[MaxMat(10,1),index101]=max(Ch0_bestfit10); [MaxMat(10,2),index102]=max(Ch1_bestfit10);
-
-%avg peak thrust and error
-ThrustAvg=mean(mean(MaxMat));
-ThrustError=mean(std(MaxMat));
+ThrustAvg=mean(MaxMat);
+ThrustError=std(MaxMat);
